@@ -39,7 +39,7 @@ class CandleSticks:
 
         return values
 
-    def tallies(self, data: pd.DataFrame, fields: typing.List):
+    def tallies(self, data: pd.DataFrame, fields: typing.List) -> pd.Series:
         """
         :param data: The DataFrame that hosts the data that will be used for sum calculations
         :param fields: The DataFrame fields that will be used for the sum calculations
@@ -84,7 +84,8 @@ class CandleSticks:
         tallies = self.tallies(data, fields)
         tallies = tallies.astype(dtype=np.int64)
         nonzero = self.nonzero(data, fields)
-        instances = pd.concat([quantiles, tallies, nonzero], axis=1)
+        maxima = data[fields].max(axis=0).rename('max')
+        instances = pd.concat([quantiles, tallies, nonzero, maxima], axis=1)
 
         sticks = self.sticks(instances)
 
