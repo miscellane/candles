@@ -12,14 +12,20 @@ class CandleSticks:
 
         :param days: A frame summarising the days for which candle stick values will be evaluated.  The
                      frame must include an 'epochmilli' column, which encodes the dates in UNIX time form
-        :param key: Join/Merge key for ...
+        :param key: The field of days that encodes the date w.r.t. the date string format of the data set whose
+                    candle points are being evaluated.  Note, the fields of the data set must match the string
+                    values of field key
         :param points: The required candle stick tile values
+
+        logging:
+            logging.basicConfig(level=logging.INFO)
+            logging.disable(logging.WARN)
         """
         self.days = days
         self.key = key
         self.points = points
 
-        logging.basicConfig(level=logging.WARNING)
+        logging.disable(logging.WARN)
         self.logger = logging.getLogger(__name__)
 
     def quantiles(self, data: pd.DataFrame, fields: typing.List):
@@ -30,16 +36,16 @@ class CandleSticks:
 
         values = data[fields].quantile(q=self.points, axis=0)
         values = values.transpose()
-        self.logger.info(values)
+
         return values
 
-    def tallies(self, data: pd.DataFrame, fields: typing.List):
+    def tallies(self, data: pd.DataFrame, fields: typing.List) -> pd.Series:
         """
         :param data: The DataFrame that hosts the data that will be used for sum calculations
         :param fields: The DataFrame fields that will be used for the sum calculations
         """
         values = data[fields].sum().rename('tally')
-        self.logger.info(values)
+
         return values
 
     def nonzero(self, data: pd.DataFrame, fields: typing.List):
@@ -78,7 +84,8 @@ class CandleSticks:
         tallies = self.tallies(data, fields)
         tallies = tallies.astype(dtype=np.int64)
         nonzero = self.nonzero(data, fields)
-        instances = pd.concat([quantiles, tallies, nonzero], axis=1)
+        maxima = data[fields].max(axis=0).rename('max')
+        instances = pd.concat([quantiles, tallies, nonzero, maxima], axis=1)
 
         sticks = self.sticks(instances)
 
