@@ -81,6 +81,6 @@ class CandleSticks:
         maxima = data[fields].max(axis=0).rename('max')
         instances = pd.concat([quantiles, maxima, tallies, nonzero], axis=1)
 
-        sticks = self.sticks(instances)
+        instances.reset_index(drop=False, inplace=True)
 
-        return sticks
+        return instances
