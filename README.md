@@ -1,15 +1,19 @@
-## Candles
+<br>
+
+Candle Sticks
 
 <br>
 
-### Anaconda
+### Development Notes
 
-```bash
-  conda create --prefix .../Anaconda3/envs/candles
-  conda activate candles
+The environment is [miscellaneous](https://github.com/briefings/energy#development-notes).  For requirements.txt
 
-  conda install -c anaconda python=3.7.7
-  conda install -c anaconda pandas
+```markdown
+    pip freeze -r docs/filter.txt > requirements.txt
 ```
 
-Note, the `pandas` installation step installs `numpy`
+For conventions
+
+```bash
+    pylint --generate-rcfile > .pylintrc
+````
